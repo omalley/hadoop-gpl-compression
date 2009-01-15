@@ -201,8 +201,7 @@
   <target name="compile-native" depends="compile-java">
   	
     <mkdir dir="${build.native}/lib"/>
-    <mkdir dir="${build.native}/src/org/apache/hadoop/io/compress/zlib"/>
-    <mkdir dir="${build.native}/src/org/apache/hadoop/io/compress/lzo"/>
+    <mkdir dir="${build.native}/src/com/hadoop/compression/lzo"/>
 
     <javah classpath="${build.classes}"
   	   destdir="${build.native}/src/com/hadoop/compression/lzo"
