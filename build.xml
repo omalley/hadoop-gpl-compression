@@ -227,7 +227,7 @@
     </exec>
 
 	<exec dir="${build.native}" executable="sh" failonerror="true">
-	  <arg line="${build.native}/libtool --mode=install cp ${build.native}/lib/libhadoop.la ${build.native}/lib"/>
+	  <arg line="${build.native}/libtool --mode=install cp ${build.native}/libgplcompression.la ${build.native}/lib"/>
     </exec>
 
   </target>
