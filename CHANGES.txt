@@ -4,3 +4,7 @@ Trunk:
 
   COMPRESS-1. Fix build file to reference the right library name. (johan via 
   omalley)
+
+  COMPRESS-2. Add a new native loader, since Hadoop's doesn't know about the
+  new library (johan via omalley)
+

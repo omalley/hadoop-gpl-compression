@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.compress.Compressor;
-import org.apache.hadoop.util.NativeCodeLoader;
 
 /**
  * A {@link Compressor} based on the lzo algorithm.
@@ -153,7 +152,7 @@ class LzoCompressor implements Compressor {
   public static final int LZO_LIBRARY_VERSION;
   
   static {
-    if (NativeCodeLoader.isNativeCodeLoaded()) {
+    if (GPLNativeCodeLoader.isNativeCodeLoaded()) {
       // Initialize the native library
       try {
         initIDs();

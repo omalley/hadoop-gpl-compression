@@ -24,7 +24,6 @@ import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.util.NativeCodeLoader;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.BlockCompressorStream;
@@ -58,7 +57,7 @@ public class LzoCodec implements Configurable, CompressionCodec {
   private static boolean nativeLzoLoaded = false;
   
   static {
-    if (NativeCodeLoader.isNativeCodeLoaded()) {
+    if (GPLNativeCodeLoader.isNativeCodeLoaded()) {
       nativeLzoLoaded = LzoCompressor.isNativeLzoLoaded() &&
         LzoDecompressor.isNativeLzoLoaded();
       
