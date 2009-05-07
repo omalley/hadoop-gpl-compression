@@ -14,8 +14,10 @@
 # along with Hadoop-Gpl-Compression.  If not, see
 # <http://www.gnu.org/licenses/>.
 ACLOCAL_AMFLAGS = -I m4
-AM_CFLAGS=-Wall -I $(srcdir)/impl -I src/com/hadoop/compression/lzo \
-          -I $(JAVA_HOME)/include
+
+AM_CPPFLAGS = @JNI_CPPFLAGS@ -I$(srcdir)/impl -Isrc/com/hadoop/compression/lzo
+AM_LDFLAGS = @JNI_LDFLAGS@
+AM_CFLAGS = -g -Wall -fPIC -O2 -m$(JVM_DATA_MODEL)
 
 # Define the libaries that need to be built
 lib_LTLIBRARIES = libgplcompression.la

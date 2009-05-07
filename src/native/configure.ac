@@ -59,4 +59,31 @@ AC_FUNC_STRERROR_R
 # Checks for library functions.
 AC_CHECK_FUNCS([mkdir uname memset])
 
+dnl Check for '-ljvm'
+JNI_LDFLAGS=""
+if test $JAVA_HOME != ""
+then
+	JNI_LDFLAGS="-L$JAVA_HOME/jre/lib/$OS_ARCH/server"
+fi
+ldflags_bak=$LDFLAGS
+LDFLAGS="$LDFLAGS $JNI_LDFLAGS"
+AC_CHECK_LIB([jvm], [JNI_GetCreatedJavaVMs])
+LDFLAGS=$ldflags_bak
+AC_SUBST([JNI_LDFLAGS])
+
+dnl Check for JNI headers
+JNI_CPPFLAGS=""
+if test $JAVA_HOME != ""
+then
+	for dir in `find $JAVA_HOME/include -follow -type d`
+	do
+		JNI_CPPFLAGS="$JNI_CPPFLAGS -I$dir"
+	done
+fi
+cppflags_bak=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $JNI_CPPFLAGS"
+AC_CHECK_HEADERS([jni.h], [], AC_MSG_ERROR([Native java headers not found. Is \$JAVA_HOME set correctly?]))
+CPPFLAGS=$cppflags_bak
+AC_SUBST([JNI_CPPFLAGS])
+
 AC_OUTPUT
