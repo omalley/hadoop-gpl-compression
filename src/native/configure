@@ -21292,7 +21292,7 @@ if test "${ac_cv_libname_lzo2+set}" = set; then
 else
 
   echo 'int main(int argc, char **argv){return 0;}' > conftest.c
-  if test -z "`${CC} ${LDFLAGS} -o conftest conftest.c -llzo2 2>&1`"; then
+  if test -z "`${CC} ${CFLAGS} ${LDFLAGS} -o conftest conftest.c -llzo2 2>&1`"; then
         if test ! -z "`which otool | grep -v 'no otool'`"; then
       ac_cv_libname_lzo2=\"`otool -L conftest | grep lzo2 | sed -e 's/^	 *//' -e 's/ .*//'`\";
     elif test ! -z "`which objdump | grep -v 'no objdump'`"; then
