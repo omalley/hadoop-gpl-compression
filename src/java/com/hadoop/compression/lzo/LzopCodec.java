@@ -415,7 +415,7 @@ public class LzopCodec extends LzoCodec {
     }
   }
 
-  protected static class LzopDecompressor extends LzoDecompressor {
+  public static class LzopDecompressor extends LzoDecompressor {
 
     private EnumMap<DChecksum,Checksum> chkDMap =
       new EnumMap<DChecksum,Checksum>(DChecksum.class);
@@ -451,6 +451,15 @@ public class LzopCodec extends LzoCodec {
       }
     }
 
+    /**
+     * Get the number of checksum implementations
+     * the current lzo file uses.
+     * @return Number of checksum implementations in use.
+     */
+    public int getChecksumsCount() {
+      return this.chkCMap.size() + this.chkDMap.size();
+    }
+    
     /**
      * Reset all checksums registered for this decompressor instance.
      */
