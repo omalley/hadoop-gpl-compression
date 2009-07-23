@@ -35,8 +35,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.RecordWriter;
@@ -61,6 +59,10 @@ public class TestLzoTextInputFormat extends TestCase {
   private MessageDigest md5;
   private String lzoFileName = "part-r-00001" + new LzopCodec().getDefaultExtension();
   private Path outputDir;
+  
+  //test both bigger outputs and small one chunk ones
+  private static final int OUTPUT_BIG = 10485760;
+  private static final int OUTPUT_SMALL = 50000;
   
   @Override
   protected void setUp() throws Exception {
@@ -100,7 +102,9 @@ public class TestLzoTextInputFormat extends TestCase {
    */
   public void testWithIndex() throws NoSuchAlgorithmException, IOException,
       InterruptedException {
-    runTest(true);
+    
+    runTest(true, OUTPUT_BIG);
+    runTest(true, OUTPUT_SMALL);
   }
 
   /**
@@ -112,10 +116,22 @@ public class TestLzoTextInputFormat extends TestCase {
    */
   public void testWithoutIndex() throws NoSuchAlgorithmException, IOException,
       InterruptedException {
-    runTest(false);
+    
+    runTest(false, OUTPUT_BIG);
+    runTest(false, OUTPUT_SMALL);
   }
 
-  private void runTest(boolean testWithIndex) throws IOException,
+  /**
+   * Generate random data, compress it, index and md5 hash the data.
+   * Then read it all back and md5 that too, to verify that it all went ok.
+   * 
+   * @param testWithIndex Should we index or not?
+   * @param charsToOutput How many characters of random data should we output.
+   * @throws IOException
+   * @throws NoSuchAlgorithmException
+   * @throws InterruptedException
+   */
+  private void runTest(boolean testWithIndex, int charsToOutput) throws IOException,
       NoSuchAlgorithmException, InterruptedException {
 
     if (!GPLNativeCodeLoader.isNativeCodeLoaded()) {
@@ -124,7 +140,7 @@ public class TestLzoTextInputFormat extends TestCase {
     }
 
     Configuration conf = new Configuration();
-    conf.setLong("fs.local.block.size", 3800703);
+    conf.setLong("fs.local.block.size", charsToOutput / 2);
     // reducing block size to force a split of the tiny file
     conf.set("io.compression.codecs", LzopCodec.class.getName());
     
@@ -141,7 +157,7 @@ public class TestLzoTextInputFormat extends TestCase {
         new TaskAttemptID("123", 0, false, 1, 2));
 
     // create some input data
-    byte[] expectedMd5 = createTestInput(outputDir, localFs, attemptContext);
+    byte[] expectedMd5 = createTestInput(outputDir, localFs, attemptContext, charsToOutput);
    
     if (testWithIndex) {
       Path lzoFile = new Path(outputDir, lzoFileName);
@@ -151,10 +167,9 @@ public class TestLzoTextInputFormat extends TestCase {
     LzoTextInputFormat inputFormat = new LzoTextInputFormat();
     TextInputFormat.setInputPaths(job, outputDir);
     
-    JobContext jobContext = new JobContext(job.getConfiguration(), new JobID());
-    List<InputSplit> is = inputFormat.getSplits(jobContext);
-    if (testWithIndex) {
-      //block size is set so we should get three
+    List<InputSplit> is = inputFormat.getSplits(job);
+    //verify we have the right number of lzo chunks
+    if (testWithIndex && OUTPUT_BIG == charsToOutput) {
       assertEquals(3, is.size());
     } else {
       assertEquals(1, is.size());
@@ -175,6 +190,7 @@ public class TestLzoTextInputFormat extends TestCase {
       rr.close();
     }
 
+    localFs.close();
     assertTrue(Arrays.equals(expectedMd5, md5.digest()));
   }
 
@@ -187,7 +203,8 @@ public class TestLzoTextInputFormat extends TestCase {
    * @throws IOException
    * @throws InterruptedException
    */
-  private byte[] createTestInput(Path outputDir, FileSystem fs, TaskAttemptContext attemptContext) throws IOException, InterruptedException {
+  private byte[] createTestInput(Path outputDir, FileSystem fs, TaskAttemptContext attemptContext, 
+      int charsToOutput) throws IOException, InterruptedException {
 
     TextOutputFormat<Text, Text> output = new TextOutputFormat<Text, Text>();
     RecordWriter<Text, Text> rw = null;
@@ -197,8 +214,6 @@ public class TestLzoTextInputFormat extends TestCase {
     try {
       rw = output.getRecordWriter(attemptContext);
 
-      // has to be enough data to create a couple of lzo blocks
-      int charsToOutput = 10485760;
       char[] chars = "abcdefghijklmnopqrstuvwxyz\u00E5\u00E4\u00F6"
           .toCharArray();
 

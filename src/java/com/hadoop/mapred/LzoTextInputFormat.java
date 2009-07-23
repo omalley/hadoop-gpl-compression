@@ -99,6 +99,7 @@ public class LzoTextInputFormat extends FileInputFormat<LongWritable, Text> {
     // with the lzo blocks
 
     List<InputSplit> result = new ArrayList<InputSplit>();
+    FileSystem fs = FileSystem.get(job.getConfiguration());
 
     for (InputSplit genericSplit : splits) {
       // load the index
@@ -132,6 +133,10 @@ public class LzoTextInputFormat extends FileInputFormat<LongWritable, Text> {
       long newEnd = index.findNextPosition(end);
       if (newEnd != -1) {
         end = newEnd;
+      } else {
+        //didn't find the next position
+        //we have hit the end of the file
+        end = fs.getFileStatus(file).getLen();
       }
 
       result.add(new FileSplit(file, start, end - start, fileSplit
