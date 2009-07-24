@@ -18,6 +18,7 @@
 
 #include "gpl-compression.h"
 #include "lzo.h"
+#include <stdlib.h>
 
 // The lzo2 library-handle
 static void *liblzo2 = NULL;
@@ -121,7 +122,9 @@ Java_com_hadoop_compression_lzo_LzoCompressor_initIDs(
 	// Load liblzo2.so
 	liblzo2 = dlopen(HADOOP_LZO_LIBRARY, RTLD_LAZY | RTLD_GLOBAL);
 	if (!liblzo2) {
-		THROW(env, "java/lang/UnsatisfiedLinkError", "Cannot load liblzo2.so!");
+	  char* msg = (char*)malloc(1000);
+	  snprintf(msg, 1000, "%s (%s)!", "Cannot load " HADOOP_LZO_LIBRARY, dlerror());
+	  THROW(env, "java/lang/UnsatisfiedLinkError", msg);
 	  return;
 	}
     

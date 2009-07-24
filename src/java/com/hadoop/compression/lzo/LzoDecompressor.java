@@ -136,6 +136,7 @@ class LzoDecompressor implements Decompressor {
         nativeLzoLoaded = true;
       } catch (Throwable t) {
         // Ignore failure to load/initialize native-lzo
+        LOG.warn(t.toString());
         nativeLzoLoaded = false;
       }
       LZO_LIBRARY_VERSION = (nativeLzoLoaded) ? 0xFFFF & getLzoLibraryVersion()
