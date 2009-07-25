@@ -36,6 +36,7 @@ class LzoDecompressor implements Decompressor {
     LogFactory.getLog(LzoDecompressor.class.getName());
 
   // HACK - Use this as a global lock in the JNI layer
+  @SuppressWarnings({ "unchecked", "unused" })
   private static Class clazz = LzoDecompressor.class;
   
   private int directBufferSize;
@@ -47,6 +48,7 @@ class LzoDecompressor implements Decompressor {
   private boolean finished;
   
   private CompressionStrategy strategy;
+  @SuppressWarnings("unused")
   private long lzoDecompressor = 0;   // The actual lzo decompression function.
   
   public static enum CompressionStrategy {

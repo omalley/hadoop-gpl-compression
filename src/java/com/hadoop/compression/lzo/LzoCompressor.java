@@ -36,6 +36,7 @@ class LzoCompressor implements Compressor {
     LogFactory.getLog(LzoCompressor.class.getName());
 
   // HACK - Use this as a global lock in the JNI layer
+  @SuppressWarnings({ "unchecked", "unused" })
   private static Class clazz = LzoDecompressor.class;
   
   private int directBufferSize;
@@ -50,8 +51,10 @@ class LzoCompressor implements Compressor {
   private long byteswritten = 0L;
 
   private CompressionStrategy strategy; // The lzo compression algorithm.
+  @SuppressWarnings("unused")
   private long lzoCompressor = 0;       // The actual lzo compression function.
   private int workingMemoryBufLen = 0;  // The length of 'working memory' buf.
+  @SuppressWarnings("unused")
   private Buffer workingMemoryBuf;      // The 'working memory' for lzo.
   
   /**

@@ -421,7 +421,6 @@ public class LzopCodec extends LzoCodec {
       new EnumMap<DChecksum,Checksum>(DChecksum.class);
     private EnumMap<CChecksum,Checksum> chkCMap =
       new EnumMap<CChecksum,Checksum>(CChecksum.class);
-    private final int bufferSize;
 
     /**
      * Create an LzoDecompressor with LZO1X strategy (the only lzo algorithm
@@ -429,7 +428,6 @@ public class LzopCodec extends LzoCodec {
      */
     public LzopDecompressor(int bufferSize) {
       super(LzoDecompressor.CompressionStrategy.LZO1X_SAFE, bufferSize);
-      this.bufferSize = bufferSize;
     }
 
     /**
