@@ -15,7 +15,7 @@
  * along with Hadoop-Gpl-Compression.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.hadoop.mapred;
+package com.hadoop.mapreduce;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -45,7 +45,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import com.hadoop.compression.lzo.GPLNativeCodeLoader;
 import com.hadoop.compression.lzo.LzopCodec;
-import com.hadoop.mapred.LzoTextInputFormat.LzoIndex;
+import com.hadoop.mapreduce.LzoTextInputFormat.LzoIndex;
 
 /**
  * Test the LzoTextInputFormat, make sure it splits the file properly and
