@@ -40,8 +40,10 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapreduce.TaskType;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 
 import com.hadoop.compression.lzo.GPLNativeCodeLoader;
 import com.hadoop.compression.lzo.LzopCodec;
@@ -153,8 +155,8 @@ public class TestLzoTextInputFormat extends TestCase {
     TextOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
     TextOutputFormat.setOutputPath(job, outputDir);
 
-    TaskAttemptContext attemptContext = new TaskAttemptContext(job.getConfiguration(),
-        new TaskAttemptID("123", 0, false, 1, 2));
+    TaskAttemptContext attemptContext = new TaskAttemptContextImpl(job.getConfiguration(),
+        new TaskAttemptID("123", 0, TaskType.REDUCE, 1, 2));
 
     // create some input data
     byte[] expectedMd5 = createTestInput(outputDir, localFs, attemptContext, charsToOutput);

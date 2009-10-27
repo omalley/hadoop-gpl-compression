@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.Compressor;
 
 /**
@@ -332,6 +333,11 @@ class LzoCompressor implements Compressor {
     compressedDirectBuf.limit(0);
     userBufOff = userBufLen = 0;
     bytesread = byteswritten = 0L;
+  }
+  
+  @Override
+  public synchronized void reinit(Configuration conf) {
+    reset();
   }
 
   /**

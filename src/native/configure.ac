@@ -18,7 +18,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(gpl-compression, 0.1.0, omalley@apache.org)
+AC_INIT(gpl-compression, 0.2.0, omalley@apache.org)
 
 AC_CONFIG_AUX_DIR([config])
 AM_INIT_AUTOMAKE([subdir-objects foreign no-dist])
