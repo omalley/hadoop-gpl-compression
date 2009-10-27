@@ -54,22 +54,8 @@ public class LzoCodec implements Configurable, CompressionCodec {
     return conf;
   }
 
+  private static boolean nativeLzoChecked = false;
   private static boolean nativeLzoLoaded = false;
-  
-  static {
-    if (GPLNativeCodeLoader.isNativeCodeLoaded()) {
-      nativeLzoLoaded = LzoCompressor.isNativeLzoLoaded() &&
-        LzoDecompressor.isNativeLzoLoaded();
-      
-      if (nativeLzoLoaded) {
-        LOG.info("Successfully loaded & initialized native-lzo library");
-      } else {
-        LOG.error("Failed to load/initialize native-lzo library");
-      }
-    } else {
-      LOG.error("Cannot load native-lzo without native-hadoop");
-    }
-  }
 
   /**
    * Check if native-lzo library is loaded & initialized.
@@ -78,10 +64,36 @@ public class LzoCodec implements Configurable, CompressionCodec {
    * @return <code>true</code> if native-lzo library is loaded & initialized;
    *         else <code>false</code>
    */
-  public static boolean isNativeLzoLoaded(Configuration conf) {
+  public static synchronized boolean isNativeLzoLoaded(Configuration conf) {
+    if (!nativeLzoChecked) {
+      if (GPLNativeCodeLoader.isNativeCodeLoaded()) {
+        nativeLzoLoaded = LzoCompressor.isNativeLzoLoaded()
+            && LzoDecompressor.isNativeLzoLoaded();
+
+        if (nativeLzoLoaded) {
+          LOG.info("Successfully loaded & initialized native-lzo library");
+        } else {
+          LOG.error("Failed to load/initialize native-lzo library");
+        }
+      } else {
+        LOG.error("Cannot load native-lzo without native-hadoop");
+      }
+      nativeLzoChecked = true;
+    }
+    
     return nativeLzoLoaded && conf.getBoolean("hadoop.native.lib", true);
   }
 
+  /**
+   * Check whether we have checked Native Lzo is loaded. (Method mainly used for
+   * unit testing.)
+   * 
+   * @return Whether we have checked Native Lzo is loaded.
+   */
+  public static synchronized boolean isNativeLzoChecked() {
+    return nativeLzoChecked;
+  }
+  
   public CompressionOutputStream createOutputStream(OutputStream out) 
     throws IOException {
     return createOutputStream(out, createCompressor());
