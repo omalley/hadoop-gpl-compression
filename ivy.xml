@@ -23,22 +23,25 @@
     The server is effectively a superset of the client.
     -->
     <conf name="client" description="client-side dependencies"
-      extends="mandatory"/>
+      extends="mandatory,httpclient"/>
     <conf name="server" description="server-side dependencies"
       extends="client"/>
 
     <!--Private configurations. -->
 
-    <conf name="common" visibility="private" extends="runtime,mandatory"
+    <conf name="common" visibility="private" extends="runtime,mandatory,jetty,log4j"
 		      description="common artifacts"/>
     <conf name="javadoc" visibility="private" description="artiracts required while performing doc generation"
       extends="common,mandatory"/>
+
     <!--Testing pulls in everything-->
     <conf name="test" extends="common,default" visibility="private"
       description="the classpath needed to run tests"/>
      
     <conf name="commons-logging" visibility="private"/>
+    <conf name="httpclient" visibility="private" extends="commons-logging"/>
     <conf name="log4j" visibility="private"/>
+    <conf name="jetty" description="Jetty provides the in-VM HTTP daemon" extends="commons-logging"/>
 
   </configurations>
 
@@ -56,6 +59,43 @@
     is pulled in, as its dependencies are usually a mess, including things
     like out of date servlet APIs, bits of Avalon, etc.
     -->
+    <dependency org="org.mortbay.jetty"
+      name="jetty"
+      rev="${jetty.version}"
+      conf="jetty->master"/>
+    <dependency org="org.mortbay.jetty"
+      name="jetty-util"
+      rev="${jetty-util.version}"
+      conf="jetty->master"/>
+    <dependency org="org.mortbay.jetty"
+      name="servlet-api-2.5"
+      rev="${servlet-api-2.5.version}"
+      conf="jetty->master"/>
+
+    <dependency org="tomcat"
+      name="jasper-runtime"
+      rev="${jasper.version}"
+      conf="jetty->master"/>
+    <dependency org="tomcat"
+      name="jasper-compiler"
+      rev="${jasper.version}"
+      conf="jetty->master"/>
+    <dependency org="tomcat"
+      name="jsp-api"
+      rev="${jsp-api.version}"
+      conf="jetty->master"/>
+
+    <dependency org="commons-httpclient"
+      name="commons-httpclient"
+      rev="${commons-httpclient.version}"
+      conf="httpclient->master">
+    </dependency>
+
+    <dependency org="commons-codec"
+      name="commons-codec"
+      rev="${commons-codec.version}"
+      conf="httpclient->default"/>
+
     <dependency org="commons-logging"
       name="commons-logging"
       rev="${commons-logging.version}"
