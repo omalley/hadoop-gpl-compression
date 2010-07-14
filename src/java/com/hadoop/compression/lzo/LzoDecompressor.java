@@ -250,6 +250,10 @@ class LzoDecompressor implements Decompressor {
     return false;
   }
 
+  public synchronized int getRemaining() {
+    return uncompressedDirectBuf.remaining();
+  }
+
   public synchronized boolean finished() {
     // Check if 'lzo' says its 'finished' and
     // all uncompressed data has been consumed

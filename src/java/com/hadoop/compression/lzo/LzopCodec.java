@@ -369,7 +369,7 @@ public class LzopCodec extends LzoCodec {
     /**
      * Read checksums and feed compressed block data into decompressor.
      */
-    protected void getCompressedData() throws IOException {
+    protected int getCompressedData() throws IOException {
       checkStream();
 
       LzopDecompressor ldecompressor = (LzopDecompressor)decompressor;
@@ -407,6 +407,7 @@ public class LzopCodec extends LzoCodec {
 
       // Send the read data to the decompressor
       decompressor.setInput(buffer, 0, len);
+      return len;
     }
 
     public void close() throws IOException {
