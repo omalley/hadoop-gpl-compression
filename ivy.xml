@@ -67,6 +67,10 @@
       name="jetty-util"
       rev="${jetty-util.version}"
       conf="jetty->master"/>
+    <dependency org="org.apache.hadoop"
+      name="hadoop-common"
+      rev="0.22.0-SNAPSHOT"
+      conf="common->default"/>
     <dependency org="org.mortbay.jetty"
       name="servlet-api-2.5"
       rev="${servlet-api-2.5.version}"
