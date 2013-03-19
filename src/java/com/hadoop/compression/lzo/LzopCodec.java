@@ -82,6 +82,7 @@ public class LzopCodec extends LzoCodec {
         getConf().getInt("io.compression.codec.lzo.buffersize", 256 * 1024));
   }
 
+  @Override
   public Decompressor createDecompressor() {
     if (!isNativeLzoLoaded(getConf())) {
       throw new RuntimeException("native-lzo library not available");
@@ -89,6 +90,15 @@ public class LzopCodec extends LzoCodec {
     return new LzopDecompressor(getConf().getInt(
           "io.compression.codec.lzo.buffersize", 256 * 1024));
   }
+
+  public Class<? extends Decompressor> getDecompressorType() {
+    // Ensure native-lzo library is loaded & initialized
+    if (!isNativeLzoLoaded(getConf())) {
+      throw new RuntimeException("native-lzo library not available");
+    }
+    return LzopDecompressor.class;
+  }
+
 
   public String getDefaultExtension() {
     return ".lzo";
